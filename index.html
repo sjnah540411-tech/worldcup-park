@@ -3,65 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>전국 파크골프 마스터 (V18 완전체)</title>
+    <title>월드컵공원 파크골프장 스코어카드</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        if (navigator.userAgent.match(/kakaotalk/i)) {
+            location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+        }
+    </script>
     <style>
-        /* [라이트 모드] 전국구에 어울리는 세련된 그린 톤 */
+        /* [라이트 모드 기본 색상 - 월드컵공원 컨셉] */
         :root { 
-            --primary-color: #2e7d32; --accent-color: #f57f17; --bg-color: #f5f5f6; 
-            --card-bg: #ffffff; --text-color: #212121; --text-muted: #757575;
-            --table-border: #e0e0e0; --table-header: #eeeeee;
-            --highlight-bg: #fff3e0; --highlight-blue: #e3f2fd; --highlight-green: #e8f5e9;
-            --btn-outline-bg: #ffffff; --btn-outline-text: #2e7d32;
+            --primary-color: #1b5e20; --accent-color: #f57f17; --bg-color: #f1f8e9; 
+            --card-bg: #ffffff; --text-color: #111111; --text-muted: #666666;
+            --table-border: #c8e6c9; --table-header: #e8f5e9;
+            --highlight-bg: #fff3e0; --highlight-blue: #e3f2fd; --highlight-green: #c8e6c9;
+            --btn-outline-bg: #ffffff; --btn-outline-text: #1b5e20;
         }
 
-        /* [다크 모드] 배터리 초절약 */
+        /* [다크 모드 색상 - 배터리 초절약] */
         [data-theme="dark"] {
-            --primary-color: #4caf50; --accent-color: #ffb300; --bg-color: #121212; 
+            --primary-color: #4caf50; --accent-color: #ffb74d; --bg-color: #121212; 
             --card-bg: #1e1e1e; --text-color: #e0e0e0; --text-muted: #aaaaaa;
-            --table-border: #424242; --table-header: #2c2c2c;
-            --highlight-bg: #4a3311; --highlight-blue: #002c3e; --highlight-green: #1b3320;
-            --btn-outline-bg: #1e1e1e; --btn-outline-text: #4caf50;
+            --table-border: #444444; --table-header: #2c2c2c;
+            --highlight-bg: #4a3311; --highlight-blue: #003333; --highlight-green: #1b3320;
+            --btn-outline-bg: #1e1e1e; --btn-outline-text: #e0e0e0;
         }
 
         body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; user-select: none; transition: background-color 0.3s, color 0.3s; }
-        .screen { display: none; padding: 15px; padding-bottom: calc(30px + env(safe-area-inset-bottom)); height: 100vh; box-sizing: border-box; flex-direction: column; }
+        
+        .screen { display: none; padding: 15px; padding-bottom: calc(30px + env(safe-area-inset-bottom)); height: 100vh; box-sizing: border-box; flex-direction: column; background-color: var(--bg-color); }
         .active { display: flex; }
-        h1 { font-size: 20px; text-align: center; margin: 5px 0 15px 0; color: var(--primary-color); font-weight: 800; }
-        h3 { font-size: 15px; margin: 10px 0 5px 0; color: var(--text-color); }
+        h1 { font-size: 22px; text-align: center; margin: 5px 0 10px 0; color: var(--primary-color); font-weight: 800; }
 
-        .btn-large { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; border: none; border-radius: 10px; margin-bottom: 10px; cursor: pointer; background-color: var(--primary-color); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-large { width: 100%; padding: 14px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; margin-bottom: 8px; cursor: pointer; background-color: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .btn-secondary { background-color: #757575; }
         .btn-confirm { background-color: #d32f2f; color: white; animation: pulse 2s infinite; }
-        .btn-outline { background-color: var(--btn-outline-bg); color: var(--btn-outline-text); border: 2px solid var(--primary-color); }
-        .btn-nav { background-color: #333; color: white; padding: 6px 10px; border-radius: 5px; border: none; font-size: 13px; font-weight:bold; }
+        .btn-outline { background-color: var(--btn-outline-bg); color: var(--btn-outline-text); border: 1px solid var(--primary-color); }
+        .btn-nav { background-color: #333; color: white; padding: 6px 10px; border-radius: 5px; border: none; font-size: 13px; font-weight: bold; }
         
         .btn-select { width:32%; padding:10px; background:var(--card-bg); border:1px solid var(--table-border); border-radius:5px; color: var(--text-color); font-weight:bold; }
         .btn-select.selected { background:var(--accent-color); border-color:var(--accent-color); color: white;}
         
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--table-border); border-radius: 8px; box-sizing: border-box; background-color: var(--card-bg); color: var(--text-color); font-weight:bold; font-size:15px;}
-        input:disabled, select:disabled { opacity: 0.7; background-color: var(--table-header); }
-        
-        .setup-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; overflow-y:auto; flex-grow:1; border: 1px solid var(--table-border); }
+        input, select { width: 100%; padding: 10px; margin-bottom: 5px; border: 1px solid var(--table-border); border-radius: 5px; box-sizing: border-box; background-color: var(--card-bg); color: var(--text-color); font-weight:bold; font-size:15px; }
         
         .hole-info-card { background-color: var(--card-bg); padding: 10px; border-radius: 10px; margin-bottom: 5px; text-align: center; border: 2px solid var(--primary-color); }
-        .player-row { background-color: var(--card-bg); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 10px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); border: 1px solid var(--table-border); }
+        .player-row { background-color: var(--card-bg); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); border: 1px solid var(--table-border); }
         
-        .score-control { display: flex; align-items: center; gap: 10px; }
-        .score-display { font-size: 30px; font-weight: bold; width: 40px; text-align: center; color: var(--primary-color); }
-        .btn-circle { width: 45px; height: 45px; border-radius: 50%; font-size: 24px; border: none; font-weight: bold; color: white; margin: 0; padding: 0;}
+        .score-control { display: flex; align-items: center; gap: 8px; }
+        .score-display { font-size: 30px; font-weight: bold; width: 36px; text-align: center; color: var(--primary-color); }
+        .btn-circle { width: 42px; height: 42px; border-radius: 50%; font-size: 22px; border: none; font-weight: bold; color: white; margin: 0; padding: 0;}
         .btn-minus { background-color: #2196f3; } .btn-plus { background-color: #f44336; }
         
-        .score-summary { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .score-summary { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
         .score-val { font-weight: bold; color: var(--text-color); font-size: 13px; }
         .total-val { font-weight: bold; color: #d32f2f; font-size: 14px; }
 
         .search-bar { display: flex; gap: 5px; margin-bottom: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px; }
         .history-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-left: 4px solid var(--primary-color); }
         
-        .table-container { overflow-x: auto; width: 100%; }
+        .table-container { overflow-x: auto; width: 100%; background: var(--card-bg); border-radius: 8px; padding: 5px;}
         .result-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; white-space: nowrap; margin-top: 8px; color: var(--text-color); }
-        .result-table th { background-color: var(--table-header); padding: 10px 6px; border: 1px solid var(--table-border); } 
+        .result-table th { background-color: var(--table-header); padding: 10px 6px; border: 1px solid var(--table-border); font-weight: bold; } 
         .result-table td { padding: 10px 6px; border: 1px solid var(--table-border); }
         
         .btn-delete-small { background-color: #d32f2f; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
@@ -74,10 +76,6 @@
         .modal-btn-cancel { background-color: var(--table-header); color: var(--text-color); }
         .modal-btn-ok { background-color: var(--primary-color); color: white; }
 
-        .hole-grid { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; margin-bottom: 5px; align-items: center; text-align:center; }
-        .hole-grid input { margin-bottom: 0; padding: 8px; text-align: center; font-size:14px; }
-        .builder-section { background: var(--bg-color); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--table-border); }
-
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
         #toast-msg { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; left: 50%; bottom: 60px; transform: translateX(-50%); z-index: 10; font-weight:bold; }
         #toast-msg.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
@@ -87,93 +85,46 @@
 <body>
 
     <div id="screen-main" class="screen active">
-        <h1 style="font-size:28px; margin-top:30px;">⛳ 전국 파크골프</h1>
-        <div style="text-align:center; color:var(--text-muted); margin-bottom:30px; font-size:14px;">나만의 구장을 등록하고 스코어를 관리하세요</div>
-        
-        <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; gap: 5px;">
-            <button class="btn-large" onclick="showSelectParkScreen()">▶ 구장 선택 및 게임 시작</button>
-            <button class="btn-large btn-outline" onclick="showAddParkScreen()">➕ 새 구장 직접 등록</button>
-            <button class="btn-large btn-secondary" onclick="showHistoryScreen()">🏆 지난 기록 조회 (상세)</button>
-            <button id="theme-btn" class="btn-large" style="background-color: #333; color: #fff; border:none;" onclick="toggleTheme()">🌙 다크 모드 (배터리 절약)</button>
+        <h1 style="font-size:26px; margin-top:40px;">🌳 월드컵공원 파크골프장</h1>
+        <div style="text-align:center; color:var(--text-muted); margin-bottom:30px; font-size:14px;">18홀 전용 스코어카드 관리 시스템</div>
+        <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+            <button class="btn-large" onclick="setupGame()">▶ 새 라운딩 시작</button>
+            <button class="btn-large btn-outline" onclick="showHistoryScreen()">🏆 지난 기록 조회 (상세)</button>
+            <button class="btn-large btn-secondary" onclick="loadLastGame()">⛳ 진행중인 경기 이어하기</button>
+            <button id="theme-btn" class="btn-large" style="background-color: #333; color: #fff; margin-top:20px;" onclick="toggleTheme()">🌙 다크 모드 (배터리 절약)</button>
         </div>
-        <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:10px;">National Edition V18 (경기 이어하기 & 카톡 이미지 공유 탑재 완전체)</div>
+        <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:10px;">월드컵공원 최적화 버전 (홀별/합계 카톡 공유 지원)</div>
     </div>
 
     <div id="screen-setup" class="screen">
         <h1>경기 설정</h1>
-        <div class="setup-card">
-            <h3>1. 구장 선택</h3>
-            <div style="display:flex; gap:10px;">
-                <select id="sel-region" onchange="updateCityOptions()"><option value="">도/광역시</option></select>
-                <select id="sel-city" onchange="updateParkOptions()"><option value="">시/군/구</option></select>
+        <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--table-border); margin-bottom: 15px; flex-grow:1; overflow-y: auto;">
+            <h3>1. 코스 선택</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; gap: 10px;">
+                <button class="btn-select" id="opt-A" onclick="selectCourseMode('A')">A코스(9홀)</button>
+                <button class="btn-select" id="opt-B" onclick="selectCourseMode('B')">B코스(9홀)</button>
+                <button class="btn-select selected" id="opt-AB" onclick="selectCourseMode('AB')">A+B(18홀)</button>
             </div>
-            <select id="sel-park" onchange="loadParkDetails()"><option value="">구장을 선택하세요</option></select>
             
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div id="course-info-display" style="font-size:13px; color:var(--text-muted);"></div>
-                <button id="btn-edit-park" class="btn-nav" style="display:none; background-color:var(--accent-color);" onclick="editCurrentPark()">⚙️ 제원 수정</button>
-            </div>
-
-            <div id="game-options-container" style="display:none;">
-                <hr style="border: 0; border-top: 1px solid var(--table-border); margin: 15px 0;">
-                <h3>2. 플레이 코스 선택</h3>
-                <div id="course-buttons" style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;"></div>
-
-                <h3>3. 시작 홀 (샷건 방식)</h3>
-                <select id="sel-start-hole" style="margin-bottom:15px;"></select>
-                
-                <h3>4. 선수 이름</h3>
-                <input type="text" id="p1" placeholder="선수 1"><input type="text" id="p2" placeholder="선수 2">
-                <input type="text" id="p3" placeholder="선수 3"><input type="text" id="p4" placeholder="선수 4">
-            </div>
-        </div>
-        
-        <div>
-            <button class="btn-large btn-secondary" onclick="showScreen('screen-main')">홈으로</button>
-            <button class="btn-large" id="btn-start-game" onclick="startGame()" style="display:none;">경기 시작 ▶</button>
-        </div>
-    </div>
-
-    <div id="screen-add-park" class="screen">
-        <h1 id="add-park-title">새 구장 직접 등록</h1>
-        <div class="setup-card">
-            <h3>1. 지역 및 구장명</h3>
-            <div style="display:flex; gap:10px;">
-                <select id="new-region">
-                    <option value="서울">서울</option><option value="경기">경기</option><option value="강원">강원</option>
-                    <option value="충북">충북</option><option value="충남">충남</option><option value="경북">경북</option>
-                    <option value="경남">경남</option><option value="전북">전북</option><option value="전남">전남</option>
-                    <option value="제주">제주</option><option value="광주">광주</option><option value="대구">대구</option>
-                    <option value="대전">대전</option><option value="부산">부산</option><option value="울산">울산</option>
-                    <option value="인천">인천</option>
-                </select>
-                <input type="text" id="new-city" placeholder="시/군/구 (예: 화천군)">
-            </div>
-            <input type="text" id="new-park-name" placeholder="파크골프장 이름 (예: 산천어)">
+            <h3>2. 시작 홀 (샷건 방식)</h3>
+            <select id="start-hole-select" style="margin-bottom:15px;"></select>
             
-            <h3>2. 구장 규모 선택</h3>
-            <select id="new-park-size" onchange="buildCourseInputs()">
-                <option value="9">9홀 (A코스)</option>
-                <option value="18" selected>18홀 (A, B코스)</option>
-                <option value="27">27홀 (A, B, C코스)</option>
-                <option value="36">36홀 (A, B, C, D코스)</option>
-            </select>
-            
-            <hr style="border: 0; border-top: 1px solid var(--table-border); margin: 15px 0;">
-            <h3 style="margin-bottom:10px;">3. 홀별 제원 (거리 생략 가능)</h3>
-            <div id="course-builder-container"></div>
+            <h3>3. 선수 이름 (최대 4인)</h3>
+            <input type="text" id="p1" placeholder="선수 1 이름">
+            <input type="text" id="p2" placeholder="선수 2 이름">
+            <input type="text" id="p3" placeholder="선수 3 이름">
+            <input type="text" id="p4" placeholder="선수 4 이름">
         </div>
-        
-        <div>
+        <div style="margin-top:auto;">
             <button class="btn-large btn-secondary" onclick="showScreen('screen-main')">취소</button>
-            <button class="btn-large" onclick="saveNewPark()">💾 구장 저장하기</button>
+            <button class="btn-large" onclick="startGame()">경기 시작 ▶</button>
         </div>
     </div>
 
     <div id="screen-game" class="screen">
-        <div class="top-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <button class="btn-nav" onclick="showScreen('screen-main')">홈</button>
-            <span id="game-park-title" style="font-weight:bold; font-size:14px; color:var(--primary-color);">구장 이름</span>
+            <span style="font-weight:bold; font-size:15px; color: var(--primary-color);">월드컵공원 파크골프장</span>
             <button class="btn-nav" onclick="showScoreboard()" style="background-color: var(--primary-color);">📋 기록표</button>
         </div>
         <div class="hole-info-card">
@@ -192,30 +143,41 @@
     </div>
 
     <div id="screen-scoreboard" class="screen">
-        <h1 style="margin-bottom:0;">📋 스코어카드</h1>
-        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">수정할 홀 번호를 터치하면 이동합니다.</div>
-        <div id="grid-container" style="overflow-y:auto; flex-grow:1; padding-bottom:10px;"></div>
-        <div style="margin-top:auto; display:flex; gap:10px;">
-            <button class="btn-large btn-secondary" style="flex:1;" onclick="closeScoreboard()">경기 계속하기</button>
-            <button class="btn-large btn-confirm" style="flex:1; animation:none;" onclick="finishGame(true)">결과 보기</button>
+        <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
+            <div id="capture-scoreboard" style="background-color: var(--bg-color); padding: 10px;">
+                <h1 style="margin-bottom:0;">📋 스코어카드 (상세)</h1>
+                <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">수정할 홀 번호를 터치하면 해당 홀로 돌아갑니다.</div>
+                <div id="grid-container"></div>
+            </div>
+        </div>
+        <div style="margin-top:auto; padding-top: 10px;">
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-scoreboard', '월드컵공원_상세스코어')">💬 카톡으로 상세표 공유하기</button>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-large btn-secondary" style="flex:1;" onclick="closeScoreboard()">경기 계속하기</button>
+                <button class="btn-large btn-confirm" style="flex:1; animation:none;" onclick="finishGame(true)">결과 보기</button>
+            </div>
         </div>
     </div>
 
-    <div id="screen-result" class="screen" style="background-color: var(--bg-color); padding: 20px;">
-        <h1 id="result-park-title" style="font-size: 24px; color: #2e7d32; text-align: center; margin-bottom: 20px;">🏆 경기 결과</h1>
-        <div class="table-container" style="margin-bottom:20px; flex-grow:1; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <table class="result-table" id="result-table" style="width: 100%; border-collapse: collapse;"></table>
+    <div id="screen-result" class="screen">
+        <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
+            <div id="capture-result" style="background-color: var(--bg-color); padding: 10px;">
+                <h1 id="result-park-title" style="font-size: 22px; color: var(--primary-color); margin-bottom: 15px;">🏆 월드컵공원 경기 결과</h1>
+                <div class="table-container">
+                    <table class="result-table" id="result-table"></table>
+                </div>
+            </div>
         </div>
         <div style="margin-top:auto; display: flex; flex-direction: column; gap: 5px;">
             <button class="btn-large btn-confirm" onclick="extendGame()" style="background-color: #d32f2f;">⛳ 다음 라운드 이어하기 (루프)</button>
-            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2);" onclick="shareResult()">💬 카톡으로 결과 공유하기</button>
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E;" onclick="shareImage('capture-result', '월드컵공원_결과합계')">💬 카톡으로 결과표 공유하기</button>
             <button class="btn-large btn-secondary" onclick="saveAndGoHome()">경기 완전 종료 (홈으로)</button>
         </div>
     </div>
 
     <div id="screen-history" class="screen">
         <h1>📜 기록 조회</h1>
-        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">조회할 기록의 날짜와 구장명을 터치하세요.</div>
+        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">날짜와 코스를 터치하면 상세 스코어가 열립니다.</div>
         <div class="search-bar">
             <input type="date" id="search-date" onchange="filterHistory()" style="width:40%; font-size:14px; margin-bottom:0;">
             <input type="text" id="search-name" placeholder="이름 검색" onkeyup="filterHistory()" style="width:60%; font-size:14px; margin-bottom:0;">
@@ -228,10 +190,15 @@
     </div>
 
     <div id="screen-past-scoreboard" class="screen">
-        <h1 style="margin-bottom:0;">📋 지난 기록 상세표</h1>
-        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">해당 라운딩의 상세 점수입니다.</div>
-        <div id="past-grid-container" style="overflow-y:auto; flex-grow:1; padding-bottom:10px;"></div>
-        <div style="margin-top:auto;">
+        <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
+            <div id="capture-past-scoreboard" style="background-color: var(--bg-color); padding: 10px;">
+                <h1 style="margin-bottom:0;">📋 지난 기록 상세표</h1>
+                <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">해당 라운딩의 개별 홀 상세 점수입니다.</div>
+                <div id="past-grid-container"></div>
+            </div>
+        </div>
+        <div style="margin-top:auto; padding-top: 10px;">
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-past-scoreboard', '월드컵공원_지난상세스코어')">💬 카톡으로 상세표 공유하기</button>
             <button class="btn-large btn-secondary" onclick="showScreen('screen-history')">뒤로 가기 (목록으로)</button>
         </div>
     </div>
@@ -240,7 +207,7 @@
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
-            <div id="modal-text" class="modal-text">메시지</div>
+            <div id="modal-text" class="modal-text">메시지 내용</div>
             <div class="modal-buttons">
                 <button id="modal-cancel" class="modal-btn modal-btn-cancel">취소</button>
                 <button id="modal-ok" class="modal-btn modal-btn-ok">확인</button>
@@ -249,48 +216,32 @@
     </div>
 
     <script>
-        // --- 1. 기본 데이터베이스 탑재 (영등포 실측 제원 탑재) ---
-        const initialDB = {
-            "서울": {
-                "영등포구": {
-                    "영등포": {
-                        A: [ {p:4,d:60}, {p:3,d:45}, {p:3,d:55}, {p:4,d:100}, {p:5,d:125}, {p:4,d:66}, {p:4,d:75}, {p:3,d:45}, {p:3,d:50} ],
-                        B: [ {p:3,d:58}, {p:4,d:100}, {p:4,d:68}, {p:3,d:50}, {p:4,d:60}, {p:3,d:55}, {p:4,d:67}, {p:5,d:120}, {p:3,d:58} ],
-                        C: [ {p:3,d:45}, {p:4,d:77}, {p:4,d:71}, {p:3,d:61}, {p:4,d:75}, {p:3,d:59}, {p:3,d:57}, {p:4,d:71}, {p:5,d:105} ],
-                        D: [ {p:3,d:51}, {p:4,d:63}, {p:4,d:67}, {p:3,d:45}, {p:3,d:56}, {p:4,d:90}, {p:5,d:120}, {p:4,d:83}, {p:3,d:45} ]
-                    }
-                }
-            },
-            "강원": {
-                "화천군": {
-                    "산천어": {
-                        A: [ {p:4,d:92}, {p:3,d:58}, {p:3,d:50}, {p:4,d:80}, {p:4,d:100}, {p:3,d:60}, {p:3,d:60}, {p:5,d:130}, {p:4,d:70} ],
-                        B: [ {p:4,d:85}, {p:3,d:50}, {p:4,d:90}, {p:3,d:55}, {p:3,d:58}, {p:4,d:85}, {p:3,d:55}, {p:4,d:88}, {p:5,d:150} ],
-                        C: [ {p:3,d:50}, {p:5,d:110}, {p:3,d:45}, {p:4,d:80}, {p:4,d:75}, {p:4,d:90}, {p:4,d:88}, {p:3,d:50}, {p:3,d:50} ],
-                        D: [ {p:3,d:46}, {p:3,d:41}, {p:4,d:65}, {p:3,d:52}, {p:4,d:75}, {p:3,d:50}, {p:4,d:70}, {p:4,d:85}, {p:5,d:135} ]
-                    },
-                    "사내": {
-                        A: [ {p:3,d:55}, {p:3,d:55}, {p:4,d:100}, {p:3,d:50}, {p:4,d:100}, {p:4,d:100}, {p:3,d:50}, {p:5,d:150}, {p:4,d:90} ],
-                        B: [ {p:4,d:100}, {p:4,d:90}, {p:3,d:55}, {p:3,d:55}, {p:4,d:90}, {p:3,d:50}, {p:3,d:50}, {p:4,d:100}, {p:5,d:150} ]
-                    },
-                    "생활체육공원": {
-                        A: [ {p:4,d:75}, {p:5,d:150}, {p:4,d:76}, {p:3,d:53}, {p:3,d:52}, {p:4,d:80}, {p:4,d:65}, {p:3,d:60}, {p:3,d:60} ],
-                        B: [ {p:3,d:55}, {p:4,d:95}, {p:5,d:125}, {p:3,d:56}, {p:4,d:75}, {p:4,d:70}, {p:3,d:57}, {p:4,d:75}, {p:3,d:58} ]
-                    }
-                }
-            }
-        };
-
-        let nationalDB = JSON.parse(localStorage.getItem('pg_national_db'));
-        if(!nationalDB) {
-            nationalDB = initialDB;
-            localStorage.setItem('pg_national_db', JSON.stringify(nationalDB));
+        // --- 테마(다크모드) 제어 ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('wc_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
         }
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('wc_theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('theme-btn');
+            if(theme === 'dark') {
+                btn.innerHTML = '☀️ 라이트 모드 (기본화면)';
+                btn.style.backgroundColor = '#f4f4f4'; btn.style.color = '#333';
+            } else {
+                btn.innerHTML = '🌙 다크 모드 (배터리 절약)';
+                btn.style.backgroundColor = '#333'; btn.style.color = '#fff';
+            }
+        }
+        window.onload = initTheme;
 
-        // 공통 유틸리티 기능
-        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function showToast(msg) { const t = document.getElementById("toast-msg"); t.innerText = msg; t.className = "show"; setTimeout(()=>t.classList.remove("show"), 2000); }
-        
+        // --- 앱 전용 팝업(모달) 제어 ---
         let currentModalAction = null;
         function showModal(msg, showCancel, onConfirm) {
             document.getElementById('modal-text').innerText = msg;
@@ -304,253 +255,48 @@
             if(currentModalAction) currentModalAction(); 
         }
 
-        function initTheme() {
-            const savedTheme = localStorage.getItem('pg_theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeButton(savedTheme);
-        }
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('pg_theme', newTheme);
-            updateThemeButton(newTheme);
-        }
-        function updateThemeButton(theme) {
-            const btn = document.getElementById('theme-btn');
-            if(theme === 'dark') { btn.innerHTML = '☀️ 라이트 모드 (기본화면)'; btn.style.backgroundColor = '#f4f4f4'; btn.style.color = '#333'; } 
-            else { btn.innerHTML = '🌙 다크 모드 (배터리 절약)'; btn.style.backgroundColor = '#333'; btn.style.color = '#fff'; }
-        }
-        window.onload = initTheme;
+        // ==========================================
+        // [월드컵공원 파크골프장 전용 제원 (사진 실측 데이터)]
+        // ==========================================
+        const courseData = {
+            A: [ {p:5,d:110}, {p:3,d:40}, {p:3,d:45}, {p:4,d:65}, {p:3,d:45}, {p:3,d:45}, {p:4,d:75}, {p:4,d:85}, {p:4,d:60} ],
+            B: [ {p:4,d:60}, {p:3,d:45}, {p:4,d:60}, {p:3,d:40}, {p:4,d:65}, {p:4,d:85}, {p:3,d:50}, {p:3,d:45}, {p:5,d:100} ]
+        };
 
-        // --- 2. 구장 직접 등록 및 제원 수정기 ---
-        function showAddParkScreen() {
-            document.getElementById('add-park-title').innerText = "새 구장 직접 등록";
-            document.getElementById('new-region').disabled = false;
-            document.getElementById('new-city').disabled = false;
-            document.getElementById('new-park-name').disabled = false;
-            document.getElementById('new-city').value = "";
-            document.getElementById('new-park-name').value = "";
-            document.getElementById('new-park-size').value = "18";
-            buildCourseInputs(); 
-            showScreen('screen-add-park');
-        }
+        let currentMode = 'AB'; let activeHoles = []; let currentHoleIndex = 0; let players = []; let gameDate = ""; let isConfirmed = false; let roundCount = 1;
 
-        function buildCourseInputs() {
-            const size = parseInt(document.getElementById('new-park-size').value);
-            const courseNames = ['A', 'B', 'C', 'D'].slice(0, size/9);
-            const container = document.getElementById('course-builder-container');
-            container.innerHTML = '';
+        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function showToast(msg) { const t = document.getElementById("toast-msg"); t.innerText = msg; t.className = "show"; setTimeout(()=>t.classList.remove("show"), 2000); }
 
-            courseNames.forEach(c => {
-                let html = `<div class="builder-section">
-                                <h4 style="margin:0 0 10px 0; color:var(--primary-color);">${c} 코스</h4>
-                                <div class="hole-grid" style="font-weight:bold; font-size:12px; color:var(--text-muted); border-bottom:1px solid var(--table-border); padding-bottom:5px;">
-                                    <div>Hole</div><div>Par(타수)</div><div>거리(m)</div>
-                                </div>`;
-                for(let i=0; i<9; i++) {
-                    html += `<div class="hole-grid">
-                                <div>${i+1}번</div>
-                                <input type="number" id="par-${c}-${i}" placeholder="Par">
-                                <input type="number" id="dist-${c}-${i}" placeholder="거리(m)">
-                             </div>`;
-                }
-                html += `</div>`;
-                container.innerHTML += html;
-            });
-        }
-
-        function editCurrentPark() {
-            const reg = document.getElementById('sel-region').value;
-            const city = document.getElementById('sel-city').value;
-            const park = document.getElementById('sel-park').value;
-            if(!park) return;
-
-            const pData = nationalDB[reg][city][park];
-            const courses = Object.keys(pData).sort();
-            const size = courses.length * 9;
-
-            document.getElementById('add-park-title').innerText = "구장 제원 수정";
-            document.getElementById('new-region').value = reg;
-            document.getElementById('new-city').value = city;
-            document.getElementById('new-park-name').value = park;
-            document.getElementById('new-park-size').value = size.toString();
-
-            document.getElementById('new-region').disabled = true;
-            document.getElementById('new-city').disabled = true;
-            document.getElementById('new-park-name').disabled = true;
-
-            buildCourseInputs();
-
-            courses.forEach(c => {
-                pData[c].forEach((h, i) => {
-                    let pInput = document.getElementById(`par-${c}-${i}`);
-                    let dInput = document.getElementById(`dist-${c}-${i}`);
-                    if(pInput) pInput.value = h.p;
-                    if(dInput && h.d > 0) dInput.value = h.d;
-                });
-            });
-
-            showScreen('screen-add-park');
-        }
-
-        function saveNewPark() {
-            const region = document.getElementById('new-region').value;
-            const city = document.getElementById('new-city').value.trim();
-            const parkName = document.getElementById('new-park-name').value.trim();
-            const size = parseInt(document.getElementById('new-park-size').value);
-            const courseNames = ['A', 'B', 'C', 'D'].slice(0, size/9);
-
-            if(!city || !parkName) { showToast("시/군/구 와 구장 이름을 정확히 입력해주세요."); return; }
-
-            let parkData = {};
-            let isValid = true;
-
-            courseNames.forEach(c => {
-                let holes = [];
-                for(let i=0; i<9; i++) {
-                    let pVal = document.getElementById(`par-${c}-${i}`).value;
-                    let p = parseInt(pVal);
-                    if(isNaN(p)) isValid = false;
-                    let d = parseInt(document.getElementById(`dist-${c}-${i}`).value) || 0;
-                    holes.push({ p: p, d: d });
-                }
-                parkData[c] = holes;
-            });
-
-            if(!isValid) { showToast("모든 홀의 Par(타수)를 입력해주세요!"); return; }
-
-            if(!nationalDB[region]) nationalDB[region] = {};
-            if(!nationalDB[region][city]) nationalDB[region][city] = {};
-            nationalDB[region][city][parkName] = parkData;
-
-            localStorage.setItem('pg_national_db', JSON.stringify(nationalDB));
-            
-            showModal(`[${region} ${city}] ${parkName} 구장이 성공적으로 저장되었습니다!`, false, () => {
-                document.getElementById('new-region').disabled = false;
-                document.getElementById('new-city').disabled = false;
-                document.getElementById('new-park-name').disabled = false;
-                showScreen('screen-main');
-            });
-        }
-
-        // --- 3. 구장 선택 및 라운딩 설정 시스템 ---
-        let selectedParkData = null;
-        let currentParkName = "";
-        let currentMode = ""; 
-        let activeHoles = []; let currentHoleIndex = 0; let players = []; let gameDate = ""; let isConfirmed = false; let roundCount = 1;
-
-        function showSelectParkScreen() {
-            const lastNames = JSON.parse(localStorage.getItem('pg_last_names') || '["나","김철수","이영희","박순자"]');
+        function setupGame() {
+            const lastNames = JSON.parse(localStorage.getItem('wc_last_names') || '["나","김철수","이영희","박순자"]');
             ['p1','p2','p3','p4'].forEach((id,i) => document.getElementById(id).value = lastNames[i]);
-            
-            document.getElementById('game-options-container').style.display = 'none';
-            document.getElementById('btn-start-game').style.display = 'none';
-            document.getElementById('btn-edit-park').style.display = 'none';
-            document.getElementById('course-info-display').innerText = '';
-            
-            const selRegion = document.getElementById('sel-region');
-            selRegion.innerHTML = '<option value="">도/광역시 선택</option>';
-            Object.keys(nationalDB).sort().forEach(reg => {
-                selRegion.innerHTML += `<option value="${reg}">${reg}</option>`;
-            });
-            updateCityOptions();
-            showScreen('screen-setup');
+            selectCourseMode('AB'); showScreen('screen-setup');
         }
-
-        function updateCityOptions() {
-            const reg = document.getElementById('sel-region').value;
-            const selCity = document.getElementById('sel-city');
-            selCity.innerHTML = '<option value="">시/군/구 선택</option>';
-            document.getElementById('sel-park').innerHTML = '<option value="">구장 선택</option>';
-            if(reg && nationalDB[reg]) {
-                Object.keys(nationalDB[reg]).sort().forEach(city => {
-                    selCity.innerHTML += `<option value="${city}">${city}</option>`;
-                });
-            }
-            loadParkDetails();
-        }
-
-        function updateParkOptions() {
-            const reg = document.getElementById('sel-region').value;
-            const city = document.getElementById('sel-city').value;
-            const selPark = document.getElementById('sel-park');
-            selPark.innerHTML = '<option value="">구장 선택</option>';
-            if(reg && city && nationalDB[reg][city]) {
-                Object.keys(nationalDB[reg][city]).sort().forEach(park => {
-                    selPark.innerHTML += `<option value="${park}">${park}</option>`;
-                });
-            }
-            loadParkDetails();
-        }
-
-        function loadParkDetails() {
-            const reg = document.getElementById('sel-region').value;
-            const city = document.getElementById('sel-city').value;
-            const park = document.getElementById('sel-park').value;
-            
-            const optionsContainer = document.getElementById('game-options-container');
-            const startBtn = document.getElementById('btn-start-game');
-            const editBtn = document.getElementById('btn-edit-park');
-            const infoDisplay = document.getElementById('course-info-display');
-
-            if(!park) {
-                optionsContainer.style.display = 'none'; startBtn.style.display = 'none'; editBtn.style.display = 'none'; infoDisplay.innerText = ''; return;
-            }
-
-            selectedParkData = nationalDB[reg][city][park];
-            currentParkName = park;
-            
-            const courses = Object.keys(selectedParkData).sort();
-            let totalHoles = courses.length * 9;
-            infoDisplay.innerText = `규모: ${totalHoles}홀 (${courses.join(', ')} 코스)`;
-            
-            const cBtns = document.getElementById('course-buttons');
-            cBtns.innerHTML = '';
-            
-            if(courses.includes('A')) cBtns.innerHTML += `<button class="btn-select" id="opt-A" onclick="selectCourseMode('A')">A(9홀)</button>`;
-            if(courses.includes('A') && courses.includes('B')) cBtns.innerHTML += `<button class="btn-select" id="opt-AB" onclick="selectCourseMode('AB')">A+B(18홀)</button>`;
-            if(courses.includes('C') && courses.includes('D')) cBtns.innerHTML += `<button class="btn-select" id="opt-CD" onclick="selectCourseMode('CD')">C+D(18홀)</button>`;
-            if(courses.length === 3) cBtns.innerHTML += `<button class="btn-select" id="opt-ABC" onclick="selectCourseMode('ABC')" style="width:100%; margin-top:5px;">A+B+C(27홀)</button>`;
-            if(courses.length === 4) cBtns.innerHTML += `<button class="btn-select" id="opt-ABCD" onclick="selectCourseMode('ABCD')" style="width:100%; margin-top:5px;">A+B+C+D(36홀)</button>`;
-
-            optionsContainer.style.display = 'block';
-            startBtn.style.display = 'block';
-            editBtn.style.display = 'block';
-            
-            if (courses.length === 3 && courses.includes('A') && courses.includes('B') && courses.includes('C')) {
-                selectCourseMode('ABC');
-            } else if (courses.includes('A') && courses.includes('B')) {
-                selectCourseMode('AB');
-            } else {
-                selectCourseMode(courses[0]);
-            }
-        }
-
+        
         function selectCourseMode(mode) {
-            currentMode = mode; 
-            document.querySelectorAll('#course-buttons .btn-select').forEach(b => b.classList.remove('selected'));
-            const btn = document.getElementById('opt-' + mode);
-            if(btn) btn.classList.add('selected'); 
+            currentMode = mode; document.querySelectorAll('.btn-select').forEach(b => b.classList.remove('selected'));
+            document.getElementById('opt-' + mode).classList.add('selected'); updateStartHoleOptions();
+        }
+        
+        function updateStartHoleOptions() {
+            const select = document.getElementById('start-hole-select'); select.innerHTML = ''; let temp = [];
+            if(currentMode.includes('A')) temp.push(...courseData.A.map((h,i)=>({c:'A',id:i+1})));
+            if(currentMode.includes('B')) temp.push(...courseData.B.map((h,i)=>({c:'B',id:i+1})));
             
-            const select = document.getElementById('sel-start-hole'); select.innerHTML = ''; let temp = [];
-            mode.split('').forEach(c => {
-                if(selectedParkData[c]) temp.push(...selectedParkData[c].map((h,i)=>({c:c,id:i+1})));
-            });
-            temp.forEach((h, idx) => { let opt = document.createElement('option'); opt.value = idx; opt.text = `${h.c}코스 ${h.id}번 홀 부터 시작` + (idx===0?' (기본)':''); select.appendChild(opt); });
+            temp.forEach((h, idx) => { let opt = document.createElement('option'); opt.value = idx; opt.text = `${h.c}코스 ${h.id}홀 부터 시작` + (idx===0?' (기본)':''); select.appendChild(opt); });
         }
 
-        // --- 4. 파크골프 점수 연산 엔진 ---
         function startGame() {
             let raw = []; 
-            currentMode.split('').forEach(c => { 
-                if(selectedParkData[c]) selectedParkData[c].forEach((h,i)=> raw.push({...h, id:i+1, c:c, r:1})); 
+            ['A','B'].forEach(c => { 
+                if(currentMode.includes(c)) courseData[c].forEach((h,i)=> raw.push({...h, id:i+1, c:c, r:1})); 
             });
-            const startIdx = parseInt(document.getElementById('sel-start-hole').value);
+            const startIdx = parseInt(document.getElementById('start-hole-select').value);
             activeHoles = raw.slice(startIdx).concat(raw.slice(0, startIdx));
             
             const names = ['p1','p2','p3','p4'].map(id => document.getElementById(id).value || "선수");
-            localStorage.setItem('pg_last_names', JSON.stringify(names));
+            localStorage.setItem('wc_last_names', JSON.stringify(names));
             players = names.map(name => ({ name: name, scores: activeHoles.map(h => h.p), confirmed: new Array(activeHoles.length).fill(false) }));
             currentHoleIndex = 0; isConfirmed = false; roundCount = 1; gameDate = new Date().toISOString().split('T')[0];
             
@@ -559,15 +305,15 @@
 
         function renderGameScreen() {
             const h = activeHoles[currentHoleIndex]; const maxScore = h.p * 2;
-            document.getElementById('game-park-title').innerText = currentParkName;
             document.getElementById('progress-text').innerText = `${currentHoleIndex+1} / ${activeHoles.length}`;
             document.getElementById('hole-badge').innerText = `${h.c}코스 ${h.id}번 홀 (R${h.r})`;
-            document.getElementById('hole-detail').innerText = `Par ${h.p} ${h.d > 0 ? '('+h.d+'m)' : ''}`;
+            document.getElementById('hole-detail').innerText = `Par ${h.p} (${h.d}m)`;
             
             const board = document.getElementById('score-board'); board.innerHTML = '';
             
             players.forEach((p, idx) => {
-                const s = p.scores[currentHoleIndex]; let total = 0; let roundSum = 0; let courseSum = 0; 
+                const s = p.scores[currentHoleIndex];
+                let total = 0; let roundSum = 0; let courseSum = 0; 
                 for(let i=0; i<activeHoles.length; i++) { 
                     if(p.confirmed[i]) {
                         total += p.scores[i];
@@ -604,12 +350,15 @@
                     players.forEach(p => p.confirmed[currentHoleIndex] = false); isConfirmed = false;
                     applyScore(idx, delta);
                 });
-            } else { applyScore(idx, delta); }
+            } else {
+                applyScore(idx, delta);
+            }
         }
 
         function applyScore(idx, delta) {
             const maxScore = activeHoles[currentHoleIndex].p * 2; let val = players[idx].scores[currentHoleIndex] + delta;
-            if(val < 1) val = 1; if(val > maxScore) { val = maxScore; showToast(`더블파 (${maxScore}) 제한!`); }
+            if(val < 1) val = 1; 
+            if(val > maxScore) { val = maxScore; showToast(`더블파 (${maxScore}) 제한!`); }
             players[idx].scores[currentHoleIndex] = val; renderGameScreen();
         }
 
@@ -620,24 +369,35 @@
 
         function nextHole() {
             if (currentHoleIndex < activeHoles.length - 1) {
-                let curr = activeHoles[currentHoleIndex]; let next = activeHoles[currentHoleIndex+1];
-                if (curr.c !== next.c || curr.r !== next.r) {
-                    let msg = `[ ${curr.c}코스 (R${curr.r}) 종료 ]\n\n`;
+                let currentHole = activeHoles[currentHoleIndex];
+                let nextHole = activeHoles[currentHoleIndex+1];
+                
+                if (currentHole.c !== nextHole.c || currentHole.r !== nextHole.r) {
+                    let msg = `[ ${currentHole.c}코스 (R${currentHole.r}) 종료 ]\n\n`;
                     players.forEach(p => { 
-                        let sum = 0; activeHoles.forEach((hObj, i) => { if(hObj.c===curr.c && hObj.r===curr.r && p.confirmed[i]) sum += p.scores[i]; }); 
+                        let sum = 0; 
+                        activeHoles.forEach((hObj, i) => { 
+                            if(hObj.c === currentHole.c && hObj.r === currentHole.r && p.confirmed[i]) sum += p.scores[i]; 
+                        }); 
                         msg += `${p.name}: ${sum}타\n`; 
                     });
                     showModal(msg, false, () => { currentHoleIndex++; renderGameScreen(); });
-                } else { currentHoleIndex++; renderGameScreen(); }
-            } else { showModal("모든 홀 경기가 끝났습니다.\n결과 화면으로 이동할까요?", true, () => { processFinishGame(); }); }
+                } else {
+                    currentHoleIndex++; renderGameScreen();
+                }
+            } else { 
+                showModal("모든 홀 경기가 끝났습니다.\n결과 화면으로 이동할까요?", true, () => { processFinishGame(); });
+            }
         }
         function prevHole() { if(currentHoleIndex > 0) { currentHoleIndex--; renderGameScreen(); } }
 
-        // --- [신규 기능 1] 라운드 연속 이어하기 구현 (루프 가속 엔진) ---
         function extendGame() {
-            showModal("현재 점수와 플레이어 명단을 유지한 채\n다음 라운드로 실시간 연장하시겠습니까?", true, () => {
+            showModal("현재 점수 기록을 유지한 채\n다음 라운드를 시작할까요?", true, () => {
                 roundCount++; 
-                let holesPerRound = currentMode.length * 9;
+                let holesPerRound = 0;
+                if(currentMode.includes('A')) holesPerRound += 9;
+                if(currentMode.includes('B')) holesPerRound += 9;
+
                 let baseSequence = activeHoles.slice(0, holesPerRound);
                 let newHoles = baseSequence.map(h => ({...h, r: roundCount})); 
                 
@@ -646,16 +406,11 @@
                     p.scores = p.scores.concat(newHoles.map(h=>h.p)); 
                     p.confirmed = p.confirmed.concat(new Array(newHoles.length).fill(false)); 
                 });
-                
-                currentHoleIndex++; 
-                isConfirmed = false; 
-                renderGameScreen(); 
-                showScreen('screen-game'); 
-                showToast(`제 ${roundCount}라운드 경기를 이어갑니다!`);
-                saveCurrentState();
+                currentHoleIndex++; isConfirmed = false; renderGameScreen(); showScreen('screen-game'); saveCurrentState();
             });
         }
 
+        // 게임 진행 중 보여주는 상세 스코어보드
         function showScoreboard() {
             const container = document.getElementById('grid-container'); container.innerHTML = '';
             let sections = []; let currentKey = '';
@@ -695,127 +450,149 @@
         function closeScoreboard() { showScreen('screen-game'); }
 
         function finishGame(isEarlyEnd = false) {
-            if (isEarlyEnd) showModal("경기를 여기서 종료하고\n최종 스코어카드를 출력할까요?", true, () => { processFinishGame(); });
-            else processFinishGame();
+            if (isEarlyEnd) {
+                showModal("경기를 여기서 종료하고\n지금까지의 결과를 보시겠습니까?", true, () => { processFinishGame(); });
+            } else {
+                processFinishGame();
+            }
         }
 
-        // --- [홀별 실측 가공 알고리즘 반영] 경기 결과 테이블 생성 ---
+        // --- 데이터 저장 및 합계 결과 계산 ---
         function processFinishGame() {
-            document.getElementById('result-park-title').innerText = `🏆 경기 결과 [${currentParkName}]`;
             showScreen('screen-result');
-            
-            let playedKeys = [];
-            activeHoles.forEach(h => {
-                let key = `${h.c}(R${h.r})`;
-                if(!playedKeys.includes(key)) playedKeys.push(key);
-            });
+            let playedCourses = [];
+            if(currentMode.includes('A')) playedCourses.push('A'); 
+            if(currentMode.includes('B')) playedCourses.push('B');
 
-            let html = `<thead><tr style="background:#eeeeee; color:#212121;">
-                        <th style="padding:12px 8px; border:1px solid #e0e0e0;">순위 및 이름</th>`;
-            playedKeys.forEach(k => { html += `<th style="padding:12px 8px; border:1px solid #e0e0e0;">${k}</th>`; });
-            html += `<th style="background:#e8f5e9; color:#2e7d32; padding:12px 8px; border:1px solid #e0e0e0;">총합계</th></tr></thead><tbody>`;
+            let rounds = [];
+            for(let r=1; r<=roundCount; r++) {
+                let roundCourses = playedCourses.map(c => ({ c: c, r: r, label: `${c}(R${r})` }));
+                rounds.push({ r: r, courses: roundCourses });
+            }
+
+            let html = `<thead><tr><th>이름</th>`;
+            rounds.forEach(rnd => {
+                rnd.courses.forEach(col => { html += `<th>${col.label}</th>`; });
+                html += `<th style="background:var(--highlight-blue);">R${rnd.r} 합계</th>`;
+            });
+            html += `<th style="background:var(--highlight-bg);">총합계</th></tr></thead><tbody>`;
 
             let ranked = players.map(p => {
-                let colScores = {}; let total = 0;
-                playedKeys.forEach(k => colScores[k] = 0);
+                let roundScores = {}; let colScores = {}; let total = 0;
+                rounds.forEach(rnd => { roundScores[rnd.r] = 0; rnd.courses.forEach(col => colScores[`${col.c}-${col.r}`] = 0); });
                 activeHoles.forEach((h, i) => { 
-                    if(p.confirmed[i]) { 
-                        let key = `${h.c}(R${h.r})`; 
-                        colScores[key] += p.scores[i]; 
-                        total += p.scores[i]; 
-                    }
+                    if(p.confirmed[i]) { let key = `${h.c}-${h.r}`; colScores[key] += p.scores[i]; roundScores[h.r] += p.scores[i]; total += p.scores[i]; }
                 });
-                return { name: p.name, colScores, total, rawScores: [...p.scores], rawConfirmed: [...p.confirmed] };
+                return { name: p.name, colScores, roundScores, total, rawScores: [...p.scores], rawConfirmed: [...p.confirmed] };
             }).sort((a,b)=>a.total - b.total);
 
             ranked.forEach((p, rank) => {
-                html += `<tr style="border-bottom:1px solid #e0e0e0; text-align:center;">
-                        <td style="font-weight:bold; padding:12px 8px; background:#fafafa;">${rank+1}위 ${p.name}</td>`;
-                playedKeys.forEach(k => {
-                    html += `<td style="padding:12px 8px; font-weight:500;">${p.colScores[k] || 0}타</td>`;
+                html += `<tr><td style="font-weight:bold;">${rank+1}위 ${p.name}</td>`;
+                rounds.forEach(rnd => {
+                    rnd.courses.forEach(col => { html += `<td>${p.colScores[`${col.c}-${col.r}`]}</td>`; });
+                    html += `<td style="font-weight:bold; background:var(--highlight-blue);">${p.roundScores[rnd.r]}</td>`;
                 });
-                html += `<td style="font-weight:bold; background:#fff3e0; color:#d32f2f; font-size:16px; padding:12px 8px;">${p.total}타</td></tr>`;
+                html += `<td style="font-weight:bold; background:var(--highlight-bg); color:#f44336;">${p.total}</td></tr>`;
             });
             html += `</tbody>`; 
             document.getElementById('result-table').innerHTML = html; 
-            saveToHistory(ranked, playedKeys);
+            saveToHistory(ranked, rounds);
         }
 
-        // --- [신규 기능 2] V14.2 기반 캡처형 카카오톡 이미지 공유 기능 구현 ---
-        function shareResult() {
-            showToast("결과 스코어카드를 캡처 중입니다...");
-            const target = document.getElementById('screen-result');
+        // ==========================================
+        // [만능 카톡 공유 기능 - 영역 캡처 모듈]
+        // ==========================================
+        function shareImage(elementId, fileNamePrefix) {
+            showToast("결과표를 이미지로 만들고 있습니다...");
+            const target = document.getElementById(elementId);
             
-            // 화면 렌더링 후 이미지 캔버스로 변환 시작
-            html2canvas(target, { backgroundColor: "#f5f5f6", scale: 2 }).then(canvas => {
+            // 캡처 전에 오버플로우 설정을 visible로 임시 변경하여 표 잘림 방지
+            const originalOverflow = target.style.overflow;
+            const originalHeight = target.style.height;
+            target.style.overflow = 'visible';
+            target.style.height = 'auto';
+
+            html2canvas(target, { backgroundColor: "#f1f8e9", scale: 2 }).then(canvas => {
+                // 원래 스타일 원상복구
+                target.style.overflow = originalOverflow;
+                target.style.height = originalHeight;
+
                 canvas.toBlob(blob => {
-                    const file = new File([blob], "parkgolf_scorecard.png", { type: "image/png" });
+                    const file = new File([blob], `${fileNamePrefix}_${gameDate || '기록'}.png`, { type: "image/png" });
                     
-                    // 모바일 기기 내장 연동 공유창 기능 호출
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                         navigator.share({
                             files: [file],
-                            title: '⛳ 파크골프 경기 결과 스코어카드',
-                            text: `오늘 [${currentParkName}] 파크골프장에서 진행된 라운딩 최종 스코어카드 전송!`
-                        }).catch(err => console.log('공유 실패 혹은 취소', err));
+                            title: '⛳ 파크골프 스코어카드',
+                            text: '월드컵공원 스코어카드 기록을 공유합니다.'
+                        }).catch(err => console.log('공유 취소/실패', err));
                     } else {
-                        // 웹 브라우저 접속 상황 시 강제 이미지 수동 다운로드로 우회 연동
+                        // 공유 미지원 환경용 (이미지 다운로드 처리)
                         const link = document.createElement('a');
-                        link.download = `파크골프_결과_${gameDate}.png`;
+                        link.download = `${fileNamePrefix}_${gameDate || '기록'}.png`;
                         link.href = canvas.toDataURL("image/png");
                         link.click();
-                        showToast("이미지가 갤러리에 자동 보관되었습니다! 카톡에서 수동 첨부하세요.");
+                        showToast("이미지가 기기에 저장되었습니다.");
                     }
                 });
             });
         }
 
-        function saveCurrentState() { localStorage.setItem('pg_temp_save', JSON.stringify({ park: currentParkName, pData: selectedParkData, mode:currentMode, activeHoles, players, idx:currentHoleIndex, date:gameDate, rc:roundCount })); }
+        function saveCurrentState() { localStorage.setItem('wc_temp_save', JSON.stringify({ mode:currentMode, activeHoles, players, idx:currentHoleIndex, date:gameDate, rc:roundCount })); }
+        
         function loadLastGame() { 
-            const data = JSON.parse(localStorage.getItem('pg_temp_save')); 
+            const data = JSON.parse(localStorage.getItem('wc_temp_save')); 
             if(!data) { showModal("저장된 게임 기록이 없습니다.", false); return; } 
-            currentParkName = data.park; selectedParkData = data.pData; currentMode = data.mode; activeHoles = data.activeHoles; players = data.players; currentHoleIndex = data.idx; gameDate = data.date; roundCount = data.rc || 1; renderGameScreen(); showScreen('screen-game'); 
+            currentMode = data.mode; activeHoles = data.activeHoles; players = data.players; currentHoleIndex = data.idx; gameDate = data.date; roundCount = data.rc || 1; renderGameScreen(); showScreen('screen-game'); 
         }
         
-        function saveToHistory(rankedPlayers, playedKeys) { 
+        function saveToHistory(rankedPlayers, rounds) { 
             const holesCopy = JSON.parse(JSON.stringify(activeHoles));
-            const item = { id: Date.now(), date: gameDate, park: currentParkName, mode: currentMode, playedKeys: playedKeys, players: rankedPlayers, activeHoles: holesCopy }; 
-            let list = JSON.parse(localStorage.getItem('pg_history') || '[]'); list.unshift(item); localStorage.setItem('pg_history', JSON.stringify(list)); 
+            const item = { id: Date.now(), date: gameDate, mode: currentMode, rounds: rounds, players: rankedPlayers, activeHoles: holesCopy }; 
+            let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]'); 
+            list.unshift(item); localStorage.setItem('wc_parkgolf_history', JSON.stringify(list)); 
         }
-        function saveAndGoHome() { localStorage.removeItem('pg_temp_save'); showScreen('screen-main'); }
         
+        function saveAndGoHome() { localStorage.removeItem('wc_temp_save'); showScreen('screen-main'); }
+        
+        // --- 기록 조회 (목록) ---
         function showHistoryScreen() { showScreen('screen-history'); filterHistory(); }
+        
         function deleteHistory(id) {
             showModal("이 기록을 삭제하시겠습니까?", true, () => {
-                let list = JSON.parse(localStorage.getItem('pg_history') || '[]'); list = list.filter(item => item.id !== id);
-                localStorage.setItem('pg_history', JSON.stringify(list)); filterHistory(); showToast("삭제되었습니다.");
+                let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
+                list = list.filter(item => item.id !== id);
+                localStorage.setItem('wc_parkgolf_history', JSON.stringify(list));
+                filterHistory(); showToast("삭제되었습니다.");
             });
         }
+
         function deleteAllHistory() {
-            let list = JSON.parse(localStorage.getItem('pg_history') || '[]');
+            let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
             if(list.length === 0) { showModal("삭제할 기록이 없습니다.", false); return; }
             showModal("⚠️ 경고\n\n모든 기록을 정말로 삭제하시겠습니까?\n(이 작업은 되돌릴 수 없습니다!)", true, () => {
-                localStorage.removeItem('pg_history'); filterHistory(); showToast("모든 기록이 삭제되었습니다.");
+                localStorage.removeItem('wc_parkgolf_history');
+                filterHistory(); showToast("모든 기록이 삭제되었습니다.");
             });
         }
 
         function filterHistory() { 
-            const list = JSON.parse(localStorage.getItem('pg_history') || '[]'); 
+            const list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]'); 
             const container = document.getElementById('history-list'); 
             if(!list.length) { container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-weight:bold;">저장된 기록이 없습니다.</div>'; return; } 
             
             container.innerHTML = list.map(g => { 
-                let pName = g.park || '구장알수없음';
                 let headerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <div onclick="viewPastScorecard(${g.id})" style="cursor:pointer; color:var(--primary-color); text-decoration:underline; font-weight:bold; font-size:15px;">
-                                        📅 ${g.date} [${pName}] (${g.mode}) 🔍
+                                        📅 ${g.date} (${g.mode}) 🔍
                                     </div>
                                     <button class="btn-delete-small" onclick="deleteHistory(${g.id})">삭제</button>
                                   </div>`;
-                if (g.playedKeys) { 
-                    let ths = ''; g.playedKeys.forEach(k => { ths += `<th>${k}</th>`; });
+                                  
+                if (g.rounds) { 
+                    let ths = ''; g.rounds.forEach(rnd => { rnd.courses.forEach(col => { ths += `<th>${col.label}</th>`; }); ths += `<th style="background:var(--highlight-blue);">R${rnd.r} 합계</th>`; });
                     let rows = g.players.map(p => { 
-                        let tds = ''; g.playedKeys.forEach(k => { tds += `<td>${p.colScores[k] || 0}</td>`; });
+                        let tds = ''; g.rounds.forEach(rnd => { rnd.courses.forEach(col => { tds += `<td>${p.colScores[`${col.c}-${col.r}`]}</td>`; }); tds += `<td style="font-weight:bold; background:var(--highlight-blue);">${p.roundScores[rnd.r]}</td>`; });
                         return `<tr><td>${p.name}</td>${tds}<td><b style="color:#f44336;">${p.total}</b></td></tr>`; 
                     }).join(''); 
                     return `<div class="history-card">${headerHTML}<div class="table-container"><table class="result-table"><tr><th>이름</th>${ths}<th>총합</th></tr>${rows}</table></div></div>`; 
@@ -823,14 +600,14 @@
             }).join(''); 
         }
 
+        // --- 지난 기록 상세 스코어카드 보기 ---
         function viewPastScorecard(id) {
-            const list = JSON.parse(localStorage.getItem('pg_history') || '[]');
+            const list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
             const g = list.find(item => item.id === id);
             if (!g) return;
             
             if (!g.activeHoles || !g.players[0].rawScores) {
-                showModal("이전 버전에서 저장된 기록이라\n상세 스코어카드(1~9번홀) 정보가\n존재하지 않습니다.", false);
-                return;
+                showModal("상세 스코어 정보가\n존재하지 않습니다.", false); return;
             }
 
             const container = document.getElementById('past-grid-container');
@@ -848,123 +625,35 @@
                 html += `<h3 style="margin:0 0 10px 0; color:var(--primary-color); text-align:left;">⛳ ${sec.c}코스 (R${sec.r})</h3>`;
                 html += `<div class="table-container"><table class="result-table" style="margin:0;">`;
                 html += `<tr style="background-color:var(--table-header);"><th>Hole</th>`;
-                
-                sec.holes.forEach(h => { html += `<th>${h.id}</th>`; });
-                html += `<th style="background:var(--highlight-green);">합계</th></tr><tr><td style="color:var(--text-muted);">Par</td>`;
-                
+                sec.holes.forEach(h => { html += `<th>${h.id}</th>`; }); 
+                html += `<th style="background:var(--highlight-green);">합계</th></tr>`;
+                html += `<tr><td style="color:var(--text-muted);">Par</td>`;
                 let parSum = sec.holes.reduce((sum, h) => sum + h.p, 0);
                 sec.holes.forEach(h => { html += `<td style="color:var(--text-muted);">${h.p}</td>`; });
                 html += `<td style="font-weight:bold;">${parSum}</td></tr>`;
                 
                 g.players.forEach(p => {
-                    let pSum = 0; html += `<tr><td style="font-weight:bold;">${p.name}</td>`;
+                    let pSum = 0; 
+                    html += `<tr><td style="font-weight:bold;">${p.name}</td>`;
                     sec.holes.forEach(h => {
                         let s = p.rawScores[h.globalIdx]; 
                         let isConf = p.rawConfirmed[h.globalIdx];
                         if (isConf) {
-                            pSum += s; let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : 'var(--text-color)');
+                            pSum += s; 
+                            let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : 'var(--text-color)');
                             html += `<td><span style="color:${color}; font-weight:bold;">${s}</span></td>`;
-                        } else { html += `<td style="color:var(--table-border);">-</td>`; }
+                        } else { 
+                            html += `<td style="color:var(--table-border);">-</td>`; 
+                        }
                     });
                     html += `<td style="font-weight:bold; background:var(--highlight-green); color:var(--primary-color);">${pSum}</td></tr>`;
                 });
-                html += `</table></div></div>`; container.innerHTML += html;
+                html += `</table></div></div>`; 
+                container.innerHTML += html;
             }); 
             
             showScreen('screen-past-scoreboard');
         }
     </script>
-</body>
-</html><div id="screen-main" class="screen active">
-    <h1>월드컵공원 파크골프장</h1>
-    <button class="btn-large" onclick="setupGame()">새 게임 시작</button>
-    <button class="btn-large btn-secondary" onclick="showHistoryScreen()">기록 조회</button>
-</div>
-
-<div id="screen-setup" class="screen">
-    <h1>경기 설정</h1>
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-        <button class="btn-select selected" id="opt-AB" onclick="selectMode('AB')">A+B 코스</button>
-    </div>
-    <input type="text" id="p1" placeholder="선수 1">
-    <input type="text" id="p2" placeholder="선수 2">
-    <button class="btn-large" onclick="startGame()">경기 시작</button>
-</div>
-
-<div id="screen-game" class="screen">
-    <div class="hole-info-card">
-        <div id="hole-badge" style="font-weight:bold; font-size:20px;">A 코스 1번홀</div>
-        <div id="hole-detail" style="font-size:24px; color:#d32f2f;">Par 4</div>
-    </div>
-    <div id="score-board" style="flex-grow:1; overflow-y:auto;"></div>
-    <button id="btn-confirm" class="btn-large btn-confirm" onclick="confirmCurrentHole()">점수 확정</button>
-    <div id="nav-buttons" style="display:none; gap:10px;">
-        <button class="btn-large btn-secondary" onclick="prevHole()" style="flex:1;">이전</button>
-        <button class="btn-large" onclick="nextHole()" style="flex:2;">다음</button>
-    </div>
-</div>
-
-<script>
-/* 월드컵공원 코스 데이터 (첨부 사진 기준) */
-var courseData = {
-    A: [{p:5,d:110},{p:3,d:40},{p:3,d:45},{p:4,d:65},{p:3,d:45},{p:3,d:45},{p:4,d:75},{p:4,d:85},{p:4,d:60}],
-    B: [{p:4,d:60},{p:3,d:45},{p:4,d:60},{p:3,d:40},{p:4,d:65},{p:4,d:85},{p:3,d:50},{p:3,d:45},{p:5,d:100}]
-};
-
-var activeHoles = [], currentHoleIndex = 0, players = [];
-
-function setupGame() { showScreen('screen-setup'); }
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-
-function startGame() {
-    activeHoles = [];
-    ['A', 'B'].forEach(c => {
-        courseData[c].forEach((h, i) => activeHoles.push({p: h.p, d: h.d, id: i + 1, c: c}));
-    });
-    let names = ['p1', 'p2'].map(id => document.getElementById(id).value || '선수');
-    players = names.map(n => ({name: n, scores: activeHoles.map(h => h.p), confirmed: new Array(activeHoles.length).fill(false)}));
-    currentHoleIndex = 0;
-    renderGameScreen();
-    showScreen('screen-game');
-}
-
-function renderGameScreen() {
-    let h = activeHoles[currentHoleIndex];
-    document.getElementById('hole-badge').innerText = h.c + ' 코스 ' + h.id + '번 홀';
-    document.getElementById('hole-detail').innerText = 'Par ' + h.p + ' (' + h.d + 'm)';
-    let board = document.getElementById('score-board'); board.innerHTML = '';
-    players.forEach((p, idx) => {
-        board.innerHTML += `<div class="player-row"><div>${p.name}</div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <button class="btn-circle btn-minus" onclick="changeScore(${idx},-1)">-</button>
-                <span style="font-size:24px; font-weight:bold;">${p.scores[currentHoleIndex]}</span>
-                <button class="btn-circle btn-plus" onclick="changeScore(${idx},1)">+</button>
-            </div></div>`;
-    });
-}
-
-function changeScore(idx, delta) {
-    players[idx].scores[currentHoleIndex] += delta;
-    if (players[idx].scores[currentHoleIndex] < 1) players[idx].scores[currentHoleIndex] = 1;
-    renderGameScreen();
-}
-
-function confirmCurrentHole() {
-    document.getElementById('btn-confirm').style.display = 'none';
-    document.getElementById('nav-buttons').style.display = 'flex';
-}
-
-function nextHole() {
-    if (currentHoleIndex < activeHoles.length - 1) {
-        currentHoleIndex++;
-        document.getElementById('btn-confirm').style.display = 'block';
-        document.getElementById('nav-buttons').style.display = 'none';
-        renderGameScreen();
-    } else { alert('경기 종료!'); showScreen('screen-main'); }
-}
-
-function prevHole() { currentHoleIndex--; renderGameScreen(); }
-function showHistoryScreen() { alert('기록 기능은 데이터 연동 후 구현됩니다.'); }
-</script>
 </body>
 </html>
