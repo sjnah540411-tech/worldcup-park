@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>월드컵공원 파크골프장 V1.0</title>
+    <style>
+        :root { 
+            --primary-color: #2e7d32; --accent-color: #ef6c00; --bg-color: #f5f5f5; 
+            --card-bg: #ffffff; --text-color: #111111; --text-muted: #757575;
+            --table-border: #ddd; --table-header: #eeeeee;
+            --highlight-bg: #fff3e0; --highlight-blue: #e3f2fd; --highlight-green: #e8f5e9;
+        }
+        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; user-select: none; }
+        .screen { display: none; padding: 15px; height: 100vh; box-sizing: border-box; flex-direction: column; }
+        .active { display: flex; }
+        h1 { font-size: 20px; text-align: center; margin: 10px 0; color: var(--primary-color); }
+        .btn-large { width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; margin-bottom: 10px; cursor: pointer; background-color: var(--primary-color); color: white; }
+        .btn-secondary { background-color: #616161; }
+        .btn-confirm { background-color: #c62828; color: white; }
+        .btn-select { width:48%; padding:12px; background:var(--card-bg); border:1px solid var(--table-border); border-radius:8px; font-weight:bold; }
+        .btn-select.selected { background:var(--accent-color); border-color:var(--accent-color); color: white;}
+        input { width: 100%; padding: 12px; margin-bottom: 8px; border: 1px solid var(--table-border); border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .hole-info-card { background: var(--card-bg); padding: 15px; border-radius: 12px; text-align: center; border: 2px solid var(--primary-color); margin-bottom: 10px; }
+        .player-row { background: var(--card-bg); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-circle { width: 45px; height: 45px; border-radius: 50%; border: none; font-size: 20px; font-weight: bold; color: white; }
+        .btn-minus { background-color: #1976d2; } .btn-plus { background-color: #d32f2f; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; }
+        .result-table th, .result-table td { padding: 10px 5px; border: 1px solid var(--table-border); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; border-radius: 15px; padding: 20px; width: 85%; max-width: 320px; text-align: center; }
+        .btn-share { background-color: #FEE500; color: #3C1E1E; }
+    </style>
+</head>
+<body>
+
+<div id="screen-main" class="screen active">
+    <h1>월드컵공원 파크골프장</h1>
+    <button class="btn-large" onclick="setupGame()">새 게임 시작</button>
+    <button class="btn-large btn-secondary" onclick="showHistoryScreen()">기록 조회</button>
+</div>
+
+<div id="screen-setup" class="screen">
+    <h1>경기 설정</h1>
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+        <button class="btn-select selected" id="opt-AB" onclick="selectMode('AB')">A+B 코스</button>
+    </div>
+    <input type="text" id="p1" placeholder="선수 1">
+    <input type="text" id="p2" placeholder="선수 2">
+    <button class="btn-large" onclick="startGame()">경기 시작</button>
+</div>
+
+<div id="screen-game" class="screen">
+    <div class="hole-info-card">
+        <div id="hole-badge" style="font-weight:bold; font-size:20px;">A 코스 1번홀</div>
+        <div id="hole-detail" style="font-size:24px; color:#d32f2f;">Par 4</div>
+    </div>
+    <div id="score-board" style="flex-grow:1; overflow-y:auto;"></div>
+    <button id="btn-confirm" class="btn-large btn-confirm" onclick="confirmCurrentHole()">점수 확정</button>
+    <div id="nav-buttons" style="display:none; gap:10px;">
+        <button class="btn-large btn-secondary" onclick="prevHole()" style="flex:1;">이전</button>
+        <button class="btn-large" onclick="nextHole()" style="flex:2;">다음</button>
+    </div>
+</div>
+
+<script>
+/* 월드컵공원 코스 데이터 (첨부 사진 기준) */
+var courseData = {
+    A: [{p:5,d:110},{p:3,d:40},{p:3,d:45},{p:4,d:65},{p:3,d:45},{p:3,d:45},{p:4,d:75},{p:4,d:85},{p:4,d:60}],
+    B: [{p:4,d:60},{p:3,d:45},{p:4,d:60},{p:3,d:40},{p:4,d:65},{p:4,d:85},{p:3,d:50},{p:3,d:45},{p:5,d:100}]
+};
+
+var activeHoles = [], currentHoleIndex = 0, players = [];
+
+function setupGame() { showScreen('screen-setup'); }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+function startGame() {
+    activeHoles = [];
+    ['A', 'B'].forEach(c => {
+        courseData[c].forEach((h, i) => activeHoles.push({p: h.p, d: h.d, id: i + 1, c: c}));
+    });
+    let names = ['p1', 'p2'].map(id => document.getElementById(id).value || '선수');
+    players = names.map(n => ({name: n, scores: activeHoles.map(h => h.p), confirmed: new Array(activeHoles.length).fill(false)}));
+    currentHoleIndex = 0;
+    renderGameScreen();
+    showScreen('screen-game');
+}
+
+function renderGameScreen() {
+    let h = activeHoles[currentHoleIndex];
+    document.getElementById('hole-badge').innerText = h.c + ' 코스 ' + h.id + '번 홀';
+    document.getElementById('hole-detail').innerText = 'Par ' + h.p + ' (' + h.d + 'm)';
+    let board = document.getElementById('score-board'); board.innerHTML = '';
+    players.forEach((p, idx) => {
+        board.innerHTML += `<div class="player-row"><div>${p.name}</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="btn-circle btn-minus" onclick="changeScore(${idx},-1)">-</button>
+                <span style="font-size:24px; font-weight:bold;">${p.scores[currentHoleIndex]}</span>
+                <button class="btn-circle btn-plus" onclick="changeScore(${idx},1)">+</button>
+            </div></div>`;
+    });
+}
+
+function changeScore(idx, delta) {
+    players[idx].scores[currentHoleIndex] += delta;
+    if (players[idx].scores[currentHoleIndex] < 1) players[idx].scores[currentHoleIndex] = 1;
+    renderGameScreen();
+}
+
+function confirmCurrentHole() {
+    document.getElementById('btn-confirm').style.display = 'none';
+    document.getElementById('nav-buttons').style.display = 'flex';
+}
+
+function nextHole() {
+    if (currentHoleIndex < activeHoles.length - 1) {
+        currentHoleIndex++;
+        document.getElementById('btn-confirm').style.display = 'block';
+        document.getElementById('nav-buttons').style.display = 'none';
+        renderGameScreen();
+    } else { alert('경기 종료!'); showScreen('screen-main'); }
+}
+
+function prevHole() { currentHoleIndex--; renderGameScreen(); }
+function showHistoryScreen() { alert('기록 기능은 데이터 연동 후 구현됩니다.'); }
+</script>
+</body>
+</html>
