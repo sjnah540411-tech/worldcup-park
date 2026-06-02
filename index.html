@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>월드컵공원 파크골프장 스코어카드</title>
+    <title>월드컵공원 파크골프 스코어</title>
+    <!-- [카톡 공유용 이미지 캡처 라이브러리] -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- [카카오톡 인앱 브라우저 오류 방지 강제 외부 실행] -->
     <script>
         if (navigator.userAgent.match(/kakaotalk/i)) {
             location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
         }
     </script>
     <style>
-        /* [라이트 모드 기본 색상 - 월드컵공원 컨셉] */
+        /* [라이트 모드 - 월드컵공원 최적화 그린 톤] */
         :root { 
             --primary-color: #1b5e20; --accent-color: #f57f17; --bg-color: #f1f8e9; 
             --card-bg: #ffffff; --text-color: #111111; --text-muted: #666666;
@@ -20,7 +22,7 @@
             --btn-outline-bg: #ffffff; --btn-outline-text: #1b5e20;
         }
 
-        /* [다크 모드 색상 - 배터리 초절약] */
+        /* [다크 모드 - 배터리 절약] */
         [data-theme="dark"] {
             --primary-color: #4caf50; --accent-color: #ffb74d; --bg-color: #121212; 
             --card-bg: #1e1e1e; --text-color: #e0e0e0; --text-muted: #aaaaaa;
@@ -61,10 +63,12 @@
         .search-bar { display: flex; gap: 5px; margin-bottom: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px; }
         .history-card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-left: 4px solid var(--primary-color); }
         
-        .table-container { overflow-x: auto; width: 100%; background: var(--card-bg); border-radius: 8px; padding: 5px;}
-        .result-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; white-space: nowrap; margin-top: 8px; color: var(--text-color); }
-        .result-table th { background-color: var(--table-header); padding: 10px 6px; border: 1px solid var(--table-border); font-weight: bold; } 
-        .result-table td { padding: 10px 6px; border: 1px solid var(--table-border); }
+        /* 캡처를 위해 테이블 영역의 배경을 항상 희게 유지 */
+        .capture-area { background-color: #ffffff !important; color: #111111 !important; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .table-container { overflow-x: auto; width: 100%; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; white-space: nowrap; margin-top: 8px; color: #111111; }
+        .result-table th { background-color: #e8f5e9; color: #1b5e20; padding: 10px 6px; border: 1px solid #c8e6c9; font-weight: bold; } 
+        .result-table td { padding: 10px 6px; border: 1px solid #c8e6c9; color: #111111; }
         
         .btn-delete-small { background-color: #d32f2f; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
 
@@ -84,8 +88,9 @@
 </head>
 <body>
 
+    <!-- 홈 화면 -->
     <div id="screen-main" class="screen active">
-        <h1 style="font-size:26px; margin-top:40px;">🌳 월드컵공원 파크골프장</h1>
+        <h1 style="font-size:26px; margin-top:40px;">🌳 월드컵공원 파크골프</h1>
         <div style="text-align:center; color:var(--text-muted); margin-bottom:30px; font-size:14px;">18홀 전용 스코어카드 관리 시스템</div>
         <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
             <button class="btn-large" onclick="setupGame()">▶ 새 라운딩 시작</button>
@@ -93,9 +98,10 @@
             <button class="btn-large btn-secondary" onclick="loadLastGame()">⛳ 진행중인 경기 이어하기</button>
             <button id="theme-btn" class="btn-large" style="background-color: #333; color: #fff; margin-top:20px;" onclick="toggleTheme()">🌙 다크 모드 (배터리 절약)</button>
         </div>
-        <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:10px;">월드컵공원 최적화 버전 (홀별/합계 카톡 공유 지원)</div>
+        <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:10px;">월드컵공원 전용 (라운드합계/홀별상세 카톡공유 완비)</div>
     </div>
 
+    <!-- 경기 설정 화면 -->
     <div id="screen-setup" class="screen">
         <h1>경기 설정</h1>
         <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--table-border); margin-bottom: 15px; flex-grow:1; overflow-y: auto;">
@@ -121,6 +127,7 @@
         </div>
     </div>
 
+    <!-- 게임 플레이 화면 -->
     <div id="screen-game" class="screen">
         <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <button class="btn-nav" onclick="showScreen('screen-main')">홈</button>
@@ -142,16 +149,17 @@
         </div>
     </div>
 
+    <!-- 1) 경기 중 상세 스코어카드 확인 및 카톡 공유 화면 -->
     <div id="screen-scoreboard" class="screen">
         <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
-            <div id="capture-scoreboard" style="background-color: var(--bg-color); padding: 10px;">
-                <h1 style="margin-bottom:0;">📋 스코어카드 (상세)</h1>
-                <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">수정할 홀 번호를 터치하면 해당 홀로 돌아갑니다.</div>
+            <div id="capture-scoreboard" class="capture-area">
+                <h2 style="color: #1b5e20; text-align: center; margin: 0 0 5px 0;">📋 홀별 상세 스코어카드</h2>
+                <div style="text-align:center; margin-bottom:10px; font-size:12px; color:#666666;">수정할 홀 번호를 터치하면 이동합니다.</div>
                 <div id="grid-container"></div>
             </div>
         </div>
         <div style="margin-top:auto; padding-top: 10px;">
-            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-scoreboard', '월드컵공원_상세스코어')">💬 카톡으로 상세표 공유하기</button>
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-scoreboard', '상세스코어')">💬 카톡으로 [상세표] 전송하기</button>
             <div style="display:flex; gap:10px;">
                 <button class="btn-large btn-secondary" style="flex:1;" onclick="closeScoreboard()">경기 계속하기</button>
                 <button class="btn-large btn-confirm" style="flex:1; animation:none;" onclick="finishGame(true)">결과 보기</button>
@@ -159,25 +167,28 @@
         </div>
     </div>
 
+    <!-- 2) 최종 결과(라운드 합계) 및 카톡 공유 화면 -->
     <div id="screen-result" class="screen">
         <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
-            <div id="capture-result" style="background-color: var(--bg-color); padding: 10px;">
-                <h1 id="result-park-title" style="font-size: 22px; color: var(--primary-color); margin-bottom: 15px;">🏆 월드컵공원 경기 결과</h1>
+            <div id="capture-result" class="capture-area">
+                <h2 style="color: #1b5e20; text-align: center; margin: 0 0 5px 0;">🏆 월드컵공원 라운드 결과</h2>
+                <p id="result-date-display" style="text-align: center; color: #666; font-size: 13px; margin: 0 0 15px 0;"></p>
                 <div class="table-container">
                     <table class="result-table" id="result-table"></table>
                 </div>
             </div>
         </div>
         <div style="margin-top:auto; display: flex; flex-direction: column; gap: 5px;">
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2);" onclick="shareImage('capture-result', '라운드합계')">💬 카톡으로 [합계표] 전송하기</button>
             <button class="btn-large btn-confirm" onclick="extendGame()" style="background-color: #d32f2f;">⛳ 다음 라운드 이어하기 (루프)</button>
-            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E;" onclick="shareImage('capture-result', '월드컵공원_결과합계')">💬 카톡으로 결과표 공유하기</button>
             <button class="btn-large btn-secondary" onclick="saveAndGoHome()">경기 완전 종료 (홈으로)</button>
         </div>
     </div>
 
+    <!-- 3) 과거 기록 목록 화면 -->
     <div id="screen-history" class="screen">
         <h1>📜 기록 조회</h1>
-        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">날짜와 코스를 터치하면 상세 스코어가 열립니다.</div>
+        <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">날짜와 코스를 터치하면 지난 상세 기록이 열립니다.</div>
         <div class="search-bar">
             <input type="date" id="search-date" onchange="filterHistory()" style="width:40%; font-size:14px; margin-bottom:0;">
             <input type="text" id="search-name" placeholder="이름 검색" onkeyup="filterHistory()" style="width:60%; font-size:14px; margin-bottom:0;">
@@ -189,16 +200,17 @@
         </div>
     </div>
 
+    <!-- 4) 지난 기록 상세표 화면 (카톡 공유 가능) -->
     <div id="screen-past-scoreboard" class="screen">
         <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 15px;">
-            <div id="capture-past-scoreboard" style="background-color: var(--bg-color); padding: 10px;">
-                <h1 style="margin-bottom:0;">📋 지난 기록 상세표</h1>
-                <div style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--text-muted);">해당 라운딩의 개별 홀 상세 점수입니다.</div>
+            <div id="capture-past-scoreboard" class="capture-area">
+                <h2 style="color: #1b5e20; text-align: center; margin: 0 0 5px 0;">📋 지난 기록 상세표</h2>
+                <p id="past-date-display" style="text-align: center; color: #666; font-size: 13px; margin: 0 0 15px 0;"></p>
                 <div id="past-grid-container"></div>
             </div>
         </div>
         <div style="margin-top:auto; padding-top: 10px;">
-            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-past-scoreboard', '월드컵공원_지난상세스코어')">💬 카톡으로 상세표 공유하기</button>
+            <button class="btn-large" style="background-color: #FEE500; color: #3C1E1E; margin-bottom: 10px;" onclick="shareImage('capture-past-scoreboard', '지난기록_상세')">💬 카톡으로 [상세표] 전송하기</button>
             <button class="btn-large btn-secondary" onclick="showScreen('screen-history')">뒤로 가기 (목록으로)</button>
         </div>
     </div>
@@ -216,7 +228,7 @@
     </div>
 
     <script>
-        // --- 테마(다크모드) 제어 ---
+        // --- 테마 제어 ---
         function initTheme() {
             const savedTheme = localStorage.getItem('wc_theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -241,7 +253,7 @@
         }
         window.onload = initTheme;
 
-        // --- 앱 전용 팝업(모달) 제어 ---
+        // --- 모달 제어 ---
         let currentModalAction = null;
         function showModal(msg, showCancel, onConfirm) {
             document.getElementById('modal-text').innerText = msg;
@@ -283,7 +295,6 @@
             const select = document.getElementById('start-hole-select'); select.innerHTML = ''; let temp = [];
             if(currentMode.includes('A')) temp.push(...courseData.A.map((h,i)=>({c:'A',id:i+1})));
             if(currentMode.includes('B')) temp.push(...courseData.B.map((h,i)=>({c:'B',id:i+1})));
-            
             temp.forEach((h, idx) => { let opt = document.createElement('option'); opt.value = idx; opt.text = `${h.c}코스 ${h.id}홀 부터 시작` + (idx===0?' (기본)':''); select.appendChild(opt); });
         }
 
@@ -350,9 +361,7 @@
                     players.forEach(p => p.confirmed[currentHoleIndex] = false); isConfirmed = false;
                     applyScore(idx, delta);
                 });
-            } else {
-                applyScore(idx, delta);
-            }
+            } else { applyScore(idx, delta); }
         }
 
         function applyScore(idx, delta) {
@@ -376,9 +385,7 @@
                     let msg = `[ ${currentHole.c}코스 (R${currentHole.r}) 종료 ]\n\n`;
                     players.forEach(p => { 
                         let sum = 0; 
-                        activeHoles.forEach((hObj, i) => { 
-                            if(hObj.c === currentHole.c && hObj.r === currentHole.r && p.confirmed[i]) sum += p.scores[i]; 
-                        }); 
+                        activeHoles.forEach((hObj, i) => { if(hObj.c === currentHole.c && hObj.r === currentHole.r && p.confirmed[i]) sum += p.scores[i]; }); 
                         msg += `${p.name}: ${sum}타\n`; 
                     });
                     showModal(msg, false, () => { currentHoleIndex++; renderGameScreen(); });
@@ -410,7 +417,7 @@
             });
         }
 
-        // 게임 진행 중 보여주는 상세 스코어보드
+        // --- 상세 스코어카드 그리기 ---
         function showScoreboard() {
             const container = document.getElementById('grid-container'); container.innerHTML = '';
             let sections = []; let currentKey = '';
@@ -421,14 +428,14 @@
             });
 
             sections.forEach(sec => {
-                let html = `<div style="margin-bottom: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">`;
-                html += `<h3 style="margin:0 0 10px 0; color:var(--primary-color); text-align:left;">⛳ ${sec.c}코스 (R${sec.r})</h3>`;
+                let html = `<div style="margin-bottom: 10px;">`;
+                html += `<h3 style="margin:0 0 5px 0; color:#1b5e20; text-align:left;">⛳ ${sec.c}코스 (R${sec.r})</h3>`;
                 html += `<div class="table-container"><table class="result-table" style="margin:0;">`;
-                html += `<tr style="background-color:var(--table-header);"><th>Hole</th>`;
-                sec.holes.forEach(h => { html += `<th onclick="jumpToHole(${h.globalIdx})" style="cursor:pointer; color:var(--primary-color); text-decoration:underline;">${h.id}</th>`; });
-                html += `<th style="background:var(--highlight-green);">합계</th></tr><tr><td style="color:var(--text-muted);">Par</td>`;
+                html += `<tr><th>Hole</th>`;
+                sec.holes.forEach(h => { html += `<th onclick="jumpToHole(${h.globalIdx})" style="cursor:pointer; text-decoration:underline;">${h.id}</th>`; });
+                html += `<th style="background:#c8e6c9;">합계</th></tr><tr><td style="color:#666;">Par</td>`;
                 let parSum = sec.holes.reduce((sum, h) => sum + h.p, 0);
-                sec.holes.forEach(h => { html += `<td style="color:var(--text-muted);">${h.p}</td>`; });
+                sec.holes.forEach(h => { html += `<td style="color:#666;">${h.p}</td>`; });
                 html += `<td style="font-weight:bold;">${parSum}</td></tr>`;
                 
                 players.forEach(p => {
@@ -436,11 +443,11 @@
                     sec.holes.forEach(h => {
                         let s = p.scores[h.globalIdx]; let isConf = p.confirmed[h.globalIdx];
                         if (isConf) {
-                            pSum += s; let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : 'var(--text-color)');
+                            pSum += s; let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : '#111');
                             html += `<td><span style="color:${color}; font-weight:bold;">${s}</span></td>`;
-                        } else { html += `<td style="color:var(--table-border);">-</td>`; }
+                        } else { html += `<td style="color:#ccc;">-</td>`; }
                     });
-                    html += `<td style="font-weight:bold; background:var(--highlight-green); color:var(--primary-color);">${pSum}</td></tr>`;
+                    html += `<td style="font-weight:bold; background:#e8f5e9; color:#1b5e20;">${pSum}</td></tr>`;
                 });
                 html += `</table></div></div>`; container.innerHTML += html;
             }); showScreen('screen-scoreboard');
@@ -449,17 +456,16 @@
         function jumpToHole(idx) { currentHoleIndex = idx; renderGameScreen(); showScreen('screen-game'); }
         function closeScoreboard() { showScreen('screen-game'); }
 
+        // --- 라운드 합계 계산 및 저장 ---
         function finishGame(isEarlyEnd = false) {
             if (isEarlyEnd) {
-                showModal("경기를 여기서 종료하고\n지금까지의 결과를 보시겠습니까?", true, () => { processFinishGame(); });
-            } else {
-                processFinishGame();
-            }
+                showModal("경기를 여기서 종료하고\n결과를 보시겠습니까?", true, () => { processFinishGame(); });
+            } else { processFinishGame(); }
         }
 
-        // --- 데이터 저장 및 합계 결과 계산 ---
         function processFinishGame() {
             showScreen('screen-result');
+            document.getElementById('result-date-display').innerText = `기록일: ${gameDate}`;
             let playedCourses = [];
             if(currentMode.includes('A')) playedCourses.push('A'); 
             if(currentMode.includes('B')) playedCourses.push('B');
@@ -473,9 +479,9 @@
             let html = `<thead><tr><th>이름</th>`;
             rounds.forEach(rnd => {
                 rnd.courses.forEach(col => { html += `<th>${col.label}</th>`; });
-                html += `<th style="background:var(--highlight-blue);">R${rnd.r} 합계</th>`;
+                html += `<th style="background:#e0f7fa;">R${rnd.r} 합계</th>`;
             });
-            html += `<th style="background:var(--highlight-bg);">총합계</th></tr></thead><tbody>`;
+            html += `<th style="background:#fff3e0;">총합계</th></tr></thead><tbody>`;
 
             let ranked = players.map(p => {
                 let roundScores = {}; let colScores = {}; let total = 0;
@@ -490,9 +496,9 @@
                 html += `<tr><td style="font-weight:bold;">${rank+1}위 ${p.name}</td>`;
                 rounds.forEach(rnd => {
                     rnd.courses.forEach(col => { html += `<td>${p.colScores[`${col.c}-${col.r}`]}</td>`; });
-                    html += `<td style="font-weight:bold; background:var(--highlight-blue);">${p.roundScores[rnd.r]}</td>`;
+                    html += `<td style="font-weight:bold; background:#e0f7fa;">${p.roundScores[rnd.r]}</td>`;
                 });
-                html += `<td style="font-weight:bold; background:var(--highlight-bg); color:#f44336;">${p.total}</td></tr>`;
+                html += `<td style="font-weight:bold; background:#fff3e0; color:#d32f2f;">${p.total}</td></tr>`;
             });
             html += `</tbody>`; 
             document.getElementById('result-table').innerHTML = html; 
@@ -503,31 +509,32 @@
         // [만능 카톡 공유 기능 - 영역 캡처 모듈]
         // ==========================================
         function shareImage(elementId, fileNamePrefix) {
-            showToast("결과표를 이미지로 만들고 있습니다...");
+            showToast("결과표를 이미지로 만들고 있습니다. 잠시만 기다려주세요...");
             const target = document.getElementById(elementId);
             
-            // 캡처 전에 오버플로우 설정을 visible로 임시 변경하여 표 잘림 방지
+            // 캡처 전 숨겨진 영역이나 스크롤로 잘리는 것을 방지하기 위해 일시적으로 CSS 강제 조정
             const originalOverflow = target.style.overflow;
             const originalHeight = target.style.height;
             target.style.overflow = 'visible';
             target.style.height = 'auto';
 
-            html2canvas(target, { backgroundColor: "#f1f8e9", scale: 2 }).then(canvas => {
-                // 원래 스타일 원상복구
+            // 이미지 배경을 흰색으로 고정하여 다크모드에서도 깔끔하게 캡처되도록 설정
+            html2canvas(target, { backgroundColor: "#ffffff", scale: 2 }).then(canvas => {
                 target.style.overflow = originalOverflow;
                 target.style.height = originalHeight;
 
                 canvas.toBlob(blob => {
                     const file = new File([blob], `${fileNamePrefix}_${gameDate || '기록'}.png`, { type: "image/png" });
                     
+                    // 카카오톡 등 네이티브 공유 호출 (모바일 기기 전용)
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                         navigator.share({
                             files: [file],
                             title: '⛳ 파크골프 스코어카드',
-                            text: '월드컵공원 스코어카드 기록을 공유합니다.'
+                            text: `월드컵공원 파크골프장 스코어카드 [${fileNamePrefix}] 입니다.`
                         }).catch(err => console.log('공유 취소/실패', err));
                     } else {
-                        // 공유 미지원 환경용 (이미지 다운로드 처리)
+                        // 공유 기능을 지원하지 않는 경우 강제 다운로드
                         const link = document.createElement('a');
                         link.download = `${fileNamePrefix}_${gameDate || '기록'}.png`;
                         link.href = canvas.toDataURL("image/png");
@@ -539,25 +546,21 @@
         }
 
         function saveCurrentState() { localStorage.setItem('wc_temp_save', JSON.stringify({ mode:currentMode, activeHoles, players, idx:currentHoleIndex, date:gameDate, rc:roundCount })); }
-        
         function loadLastGame() { 
             const data = JSON.parse(localStorage.getItem('wc_temp_save')); 
             if(!data) { showModal("저장된 게임 기록이 없습니다.", false); return; } 
             currentMode = data.mode; activeHoles = data.activeHoles; players = data.players; currentHoleIndex = data.idx; gameDate = data.date; roundCount = data.rc || 1; renderGameScreen(); showScreen('screen-game'); 
         }
-        
         function saveToHistory(rankedPlayers, rounds) { 
             const holesCopy = JSON.parse(JSON.stringify(activeHoles));
             const item = { id: Date.now(), date: gameDate, mode: currentMode, rounds: rounds, players: rankedPlayers, activeHoles: holesCopy }; 
             let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]'); 
             list.unshift(item); localStorage.setItem('wc_parkgolf_history', JSON.stringify(list)); 
         }
-        
         function saveAndGoHome() { localStorage.removeItem('wc_temp_save'); showScreen('screen-main'); }
         
         // --- 기록 조회 (목록) ---
         function showHistoryScreen() { showScreen('screen-history'); filterHistory(); }
-        
         function deleteHistory(id) {
             showModal("이 기록을 삭제하시겠습니까?", true, () => {
                 let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
@@ -566,7 +569,6 @@
                 filterHistory(); showToast("삭제되었습니다.");
             });
         }
-
         function deleteAllHistory() {
             let list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
             if(list.length === 0) { showModal("삭제할 기록이 없습니다.", false); return; }
@@ -575,7 +577,6 @@
                 filterHistory(); showToast("모든 기록이 삭제되었습니다.");
             });
         }
-
         function filterHistory() { 
             const list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]'); 
             const container = document.getElementById('history-list'); 
@@ -605,11 +606,9 @@
             const list = JSON.parse(localStorage.getItem('wc_parkgolf_history') || '[]');
             const g = list.find(item => item.id === id);
             if (!g) return;
-            
-            if (!g.activeHoles || !g.players[0].rawScores) {
-                showModal("상세 스코어 정보가\n존재하지 않습니다.", false); return;
-            }
+            if (!g.activeHoles || !g.players[0].rawScores) { showModal("상세 스코어 정보가 존재하지 않습니다.", false); return; }
 
+            document.getElementById('past-date-display').innerText = `기록일: ${g.date}`;
             const container = document.getElementById('past-grid-container');
             container.innerHTML = '';
             
@@ -621,38 +620,29 @@
             });
 
             sections.forEach(sec => {
-                let html = `<div style="margin-bottom: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">`;
-                html += `<h3 style="margin:0 0 10px 0; color:var(--primary-color); text-align:left;">⛳ ${sec.c}코스 (R${sec.r})</h3>`;
+                let html = `<div style="margin-bottom: 10px;">`;
+                html += `<h3 style="margin:0 0 5px 0; color:#1b5e20; text-align:left;">⛳ ${sec.c}코스 (R${sec.r})</h3>`;
                 html += `<div class="table-container"><table class="result-table" style="margin:0;">`;
-                html += `<tr style="background-color:var(--table-header);"><th>Hole</th>`;
+                html += `<tr><th>Hole</th>`;
                 sec.holes.forEach(h => { html += `<th>${h.id}</th>`; }); 
-                html += `<th style="background:var(--highlight-green);">합계</th></tr>`;
-                html += `<tr><td style="color:var(--text-muted);">Par</td>`;
+                html += `<th style="background:#c8e6c9;">합계</th></tr><tr><td style="color:#666;">Par</td>`;
                 let parSum = sec.holes.reduce((sum, h) => sum + h.p, 0);
-                sec.holes.forEach(h => { html += `<td style="color:var(--text-muted);">${h.p}</td>`; });
+                sec.holes.forEach(h => { html += `<td style="color:#666;">${h.p}</td>`; });
                 html += `<td style="font-weight:bold;">${parSum}</td></tr>`;
                 
                 g.players.forEach(p => {
-                    let pSum = 0; 
-                    html += `<tr><td style="font-weight:bold;">${p.name}</td>`;
+                    let pSum = 0; html += `<tr><td style="font-weight:bold;">${p.name}</td>`;
                     sec.holes.forEach(h => {
-                        let s = p.rawScores[h.globalIdx]; 
-                        let isConf = p.rawConfirmed[h.globalIdx];
+                        let s = p.rawScores[h.globalIdx]; let isConf = p.rawConfirmed[h.globalIdx];
                         if (isConf) {
-                            pSum += s; 
-                            let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : 'var(--text-color)');
+                            pSum += s; let color = s < h.p ? '#2196f3' : (s > h.p ? '#f44336' : '#111');
                             html += `<td><span style="color:${color}; font-weight:bold;">${s}</span></td>`;
-                        } else { 
-                            html += `<td style="color:var(--table-border);">-</td>`; 
-                        }
+                        } else { html += `<td style="color:#ccc;">-</td>`; }
                     });
-                    html += `<td style="font-weight:bold; background:var(--highlight-green); color:var(--primary-color);">${pSum}</td></tr>`;
+                    html += `<td style="font-weight:bold; background:#e8f5e9; color:#1b5e20;">${pSum}</td></tr>`;
                 });
-                html += `</table></div></div>`; 
-                container.innerHTML += html;
-            }); 
-            
-            showScreen('screen-past-scoreboard');
+                html += `</table></div></div>`; container.innerHTML += html;
+            }); showScreen('screen-past-scoreboard');
         }
     </script>
 </body>
